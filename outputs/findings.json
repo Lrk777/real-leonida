@@ -6,7 +6,7 @@
     "zillow_compared_with": "2021-10-31"
   },
   "statewide": {
-    "hurricane_landfalls_florida_since_1851": 131,
+    "hurricanes_making_landfall_in_florida_since_1851": 106,
     "sinkhole_reports": 4470,
     "inat_alligator_obs": 41586,
     "inat_all_obs": 3996158
@@ -122,7 +122,7 @@
   "top_landfalls": [
     [
       "Monroe",
-      28
+      22
     ],
     [
       "Bay",
@@ -133,11 +133,11 @@
       10
     ],
     [
-      "Lee",
+      "Franklin",
       7
     ],
     [
-      "Franklin",
+      "Collier",
       7
     ]
   ],
@@ -354,5 +354,27 @@
     "homicide_per_100k": 5.75,
     "crash_deaths_per_100k": 20.85,
     "home_value": 302690.36
-  }
+  },
+  "headlines": [
+    {
+      "big": "Ambrosia is the real chaos capital",
+      "text": "Its real counties (Glades, Hendry) score 74/100, the highest of the six regions. Glades is #2 of 67 Florida counties."
+    },
+    {
+      "big": "Real Vice City ranks #29 of 67",
+      "text": "Miami-Dade scores 54/100, close to a typical Florida county. Homicide rate: #15 of 58. Road deaths: #64 of 67. Home prices: #4."
+    },
+    {
+      "big": "22 hurricanes came ashore",
+      "text": "More hurricanes have made landfall in Monroe County (GTA 6: Leonida Keys / Grassrivers) since 1851 than in any other Florida county."
+    },
+    {
+      "big": "291 sinkholes per 1,000 km\u00b2",
+      "text": "Citrus County leads Florida for reported sinkholes. None of the top 5 sinkhole counties is in a GTA 6 region."
+    },
+    {
+      "big": "1 in 37 wildlife sightings is a gator",
+      "text": "In Collier County (GTA 6: Grassrivers), alligators make up 2.7% of all iNaturalist wildlife observations, the most of any county with 20,000+ observations."
+    }
+  ]
 }

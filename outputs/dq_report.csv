@@ -4,7 +4,8 @@ population: 67 counties,True,hard,found 67
 population: all positive,True,hard,
 HURDAT2: parsed storms,True,hard,1988 storms
 HURDAT2: latest season present,True,hard,
-sinkholes: no duplicate report numbers,False,soft,10 duplicates
+sinkholes: exact duplicate reports removed,True,soft,0 removed
+sinkholes: report numbers unique after de-duplication,False,soft,10 report numbers reused at different locations (kept)
 sinkholes: >= 98% assigned to a county,True,hard,100.0% assigned
 sinkholes: point location agrees with county field,True,soft,99.1% agree
 GBIF: every county name matched,True,hard,unmatched: []
