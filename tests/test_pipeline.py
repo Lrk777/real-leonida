@@ -54,7 +54,8 @@ def make_raw(root):
     json.dump([{"gadm_gid": f"g{i}", "gadm_name": inv.get(n, n), "all_obs": 1000 + i, "alligator_obs": i}
                for i, n in enumerate(NAMES)], open(os.path.join(raw, "gbif_inat_florida.json"), "w"))
     storm = ["AL012025,               TEST,     3,", "20250901, 0000,  , HU, 25.2N,  86.0W, 100,  950,",
-             "20250901, 0600, L, HU, 25.4N,  87.0W, 100,  950,", "20250901, 1200,  , HU, 25.6N,  87.9W,  80,  960,"]
+             "20250901, 0600, L, HU, 25.4N,  87.0W, 100,  950,", "20250901, 0700, L, HU, 25.5N,  87.1W,  95,  952,",
+             "20250901, 1200,  , HU, 25.6N,  87.9W,  80,  960,"]
     filler = "\n".join(f"AL{n:02d}{1900 + n // 10},  X,  1,\n{1900 + n // 10}0101, 0000,  , TS, 10.0N,  40.0W,  30, -999," for n in range(1, 1950))
     open(os.path.join(raw, "hurdat2.txt"), "w").write(filler + "\n" + "\n".join(storm) + "\n")
 
@@ -73,5 +74,9 @@ def test_build_end_to_end(tmp_path, monkeypatch):
     assert {r["region"] for r in regions} == {"Vice City", "Leonida Keys", "Grassrivers", "Ambrosia", "Port Gellhorn", "Mount Kalaga"}
     html = open(tmp_path / "site" / "index.html").read()
     assert "/*__DATA__*/null" not in html and '"counties"' in html
+    readme = open(tmp_path / "README.md").read()
+    assert "| Vice City |" in readme and "nan" not in readme.lower().replace("nanc", "")
     lf = list(csv.DictReader(open(out / "florida_hurricane_landfalls.csv")))
-    assert len(lf) == 1 and lf[0]["name"] == "TEST"
+    assert len(lf) == 2 and {r["name"] for r in lf} == {"TEST"}  # two landfall records...
+    first = next(r for r in rows if r["fips"] == "12001")
+    assert first["landfalls_since_1851"] == "1"                     # ...but one storm

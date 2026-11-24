@@ -56,6 +56,6 @@ CHAOS_LAYERS = {
     "hurricanes_per_decade": "Hurricanes passing within 60 nm, per decade (1950-2025)",
     "sinkholes_per_1000km2": "Reported sinkholes per 1,000 km²",
     "gators_per_10k_obs": "Alligators per 10,000 iNaturalist wildlife observations",
-    "homicide_per_100k": "Homicides per 100,000 residents (CDC, 2016-2022)",
-    "crash_deaths_per_100k": "Motor-vehicle crash deaths per 100,000 (CDC, 2016-2022)",
+    "homicide_per_100k": "Homicides per 100,000 residents (CDC via County Health Rankings 2025)",
+    "crash_deaths_per_100k": "Motor-vehicle crash deaths per 100,000 (CDC via County Health Rankings 2025)",
 }
