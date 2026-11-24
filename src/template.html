@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Leonida: is GTA 6's Florida exaggerated?</title>
+<meta name="description" content="Hurricanes, sinkholes, alligators, homicide, road deaths and home prices for all 67 Florida counties, matched to the regions of GTA 6's Leonida.">
+<style>
+  :root{
+    --bg:#fbfaf7; --surface:#ffffff; --ink:#1d1d1b; --ink2:#55544f; --muted:#8a8984; --line:#e7e5df;
+    --accent:#d9468a; --accent-soft:#fbe6f0; --focus:#1c5cab;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{padding:40px 0 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff3f8 0%,var(--bg) 100%)}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:clamp(28px,4.4vw,46px);line-height:1.08;margin:8px 0 10px;letter-spacing:-.02em}
+  .dek{max-width:760px;color:var(--ink2);font-size:18px;margin:0}
+  h2{font-size:22px;margin:34px 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink2);margin:0 0 16px;max-width:780px}
+  .headlines{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:22px}
+  .hl{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .hl b{display:block;font-size:24px;line-height:1.15;margin-bottom:4px}
+  .hl span{color:var(--ink2);font-size:14px}
+  .regions{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+  .rc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
+  .rc:hover,.rc.on{border-color:var(--accent)}
+  .rc:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .rc h3{margin:0;font-size:18px}
+  .rc .insp{color:var(--muted);font-size:13px;margin:2px 0 10px}
+  .score{display:flex;align-items:baseline;gap:6px}
+  .score b{font-size:34px;line-height:1}
+  .score small{color:var(--muted)}
+  .conf{font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:99px;background:#f0efec;color:var(--ink2);float:right}
+  .bars{margin-top:10px;display:grid;gap:5px}
+  .bar{display:grid;grid-template-columns:92px 1fr 30px;align-items:center;gap:8px;font-size:12px;color:var(--ink2)}
+  .bar i{display:block;height:8px;border-radius:4px;background:#f0efec;position:relative;overflow:hidden}
+  .bar i em{position:absolute;left:0;top:0;bottom:0;background:#3987e5;border-radius:4px}
+  .bar span:last-child{text-align:right;color:var(--ink)}
+  .controls{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+  .controls button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer}
+  .controls button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .controls button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .mapgrid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:18px;align-items:start}
+  @media (max-width:860px){.mapgrid{grid-template-columns:1fr}}
+  .mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;position:relative}
+  svg{width:100%;height:auto;display:block}
+  path.c{stroke:#fff;stroke-width:.8;cursor:pointer}
+  path.c:hover{stroke:var(--ink);stroke-width:1.6}
+  path.c.sel{stroke:var(--accent);stroke-width:2.6}
+  path.c.reg{stroke:var(--accent);stroke-width:1.8}
+  path.c.na{fill:#f0efec}
+  .legend{display:flex;align-items:center;gap:0;margin:8px 4px 2px;font-size:12px;color:var(--ink2);flex-wrap:wrap}
+  .legend .sw{width:46px;height:10px;margin-right:2px}
+  .legend .lab{width:48px;text-align:left}
+  .legend .unit{width:100%;margin-top:4px;color:var(--muted)}
+  .tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:13px;padding:6px 9px;border-radius:6px;white-space:nowrap;opacity:0;transition:opacity .08s}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .panel h3{margin:0 0 2px;font-size:22px}
+  .panel .meta{color:var(--muted);font-size:13px;margin-bottom:10px}
+  .panel table{width:100%;border-collapse:collapse;font-size:14px}
+  .panel td{padding:6px 0;border-top:1px solid var(--line)}
+  .panel td:nth-child(2){text-align:right;font-variant-numeric:tabular-nums}
+  .panel td:nth-child(3){text-align:right;color:var(--muted);font-size:12px;width:70px}
+  .tag{display:inline-block;background:var(--accent-soft);color:#8a1f52;font-size:12px;border-radius:99px;padding:1px 8px;margin:0 4px 4px 0}
+  details{margin-top:14px}
+  summary{cursor:pointer;font-weight:600}
+  .tbl{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:10px;background:var(--surface);margin-top:10px}
+  .tbl table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+  .tbl th,.tbl td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+  .tbl th:first-child,.tbl td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+  .tbl th{position:sticky;top:0;background:#f6f5f1;cursor:pointer;font-weight:600}
+  .method{color:var(--ink2);font-size:14px;max-width:860px}
+  .method li{margin-bottom:6px}
+  footer{margin:40px 0 30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  a{color:#1c5cab}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="kicker">GTA 6 × public data</div>
+    <h1>Is GTA 6's Florida exaggerated?</h1>
+    <p class="dek">GTA 6 is set in Leonida, a parody of Florida. I matched each of its six regions to the real counties behind them and checked five kinds of chaos with government and open data: hurricanes, sinkholes, alligators, homicide and road deaths.</p>
+    <div class="headlines" id="headlines"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <h2>The six regions of Leonida, scored against real Florida</h2>
+  <p class="sub">Reality Score = how chaotic the real counties are compared with the rest of Florida (0 = calmest county, 100 = most chaotic), averaged over the five layers. 50 is a typical Florida county. Click a card to find it on the map.</p>
+  <div class="regions" id="regions"></div>
+
+  <h2>All 67 Florida counties</h2>
+  <p class="sub">Pick a layer. Hover for a value, click a county for its full profile. Pink outlines are the counties a GTA 6 region is based on.</p>
+  <div class="controls" id="controls" role="group" aria-label="Map layer"></div>
+  <div class="mapgrid">
+    <div class="mapbox" id="mapbox">
+      <svg id="map" role="img" aria-label="Choropleth map of Florida counties"></svg>
+      <div class="legend" id="legend"></div>
+      <div class="tip" id="tip"></div>
+    </div>
+    <div class="panel" id="panel"></div>
+  </div>
+
+  <details>
+    <summary>Table view (all counties, sortable)</summary>
+    <div class="tbl"><table id="table"></table></div>
+  </details>
+
+  <h2>How this was built</h2>
+  <ul class="method" id="method">
+    <li><b>Region → county matching</b> follows press map guides (PC Gamer, GTABase, GTABoom). It is a judgement call: the game is not a 1:1 map, and Mount Kalaga (a mountain) has no real Florida equivalent, so its match is marked low confidence.</li>
+    <li><b>Hurricanes:</b> NOAA HURDAT2 best tracks. A county is "hit" when a storm's track, interpolated hourly, passes within 60 nautical miles of the county's centre at hurricane strength (≥64 kt), 1950-2025. Landfall counts use HURDAT2 landfall records since 1851.</li>
+    <li><b>Sinkholes:</b> Florida Geological Survey subsidence incident reports, placed in counties by their coordinates. Most reports are not field-verified, so this measures reported ground collapse, not confirmed sinkholes.</li>
+    <li><b>Alligators:</b> iNaturalist research-grade observations via GBIF. Counting raw sightings would just measure where people are, so the layer is alligators per 10,000 wildlife observations of any species in that county.</li>
+    <li><b>Homicide and road deaths:</b> County Health Rankings 2025 (CDC death records, multi-year averages). Small counties with too few deaths are suppressed by the source and shown in grey.</li>
+    <li><b>Home prices:</b> Zillow Home Value Index (mid-tier homes). Shown for context, not part of the score.</li>
+    <li><b>Score:</b> each layer is turned into a percentile among Florida's 67 counties, then averaged. Code, tests and data-quality checks: <a href="https://github.com/Lrk777/real-leonida">github.com/Lrk777/real-leonida</a>.</li>
+  </ul>
+</main>
+<footer><div class="wrap">Built by Lavanya Kumar · Data: NOAA NHC, Florida Geological Survey, GBIF/iNaturalist, County Health Rankings &amp; Roadmaps, US Census Bureau, Zillow Research. GTA 6 and Leonida belong to Rockstar Games; this is an independent fan analysis.</div></footer>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = s => document.querySelector(s);
+const fmt = (v, dp) => v == null ? "–" : Number(v).toLocaleString("en-CA", {minimumFractionDigits: dp, maximumFractionDigits: dp});
+const money = v => v == null ? "–" : "$" + Math.round(v / 1000).toLocaleString("en-CA") + "k";
+const layerBy = Object.fromEntries(D.layers.map(l => [l.key, l]));
+const byFips = Object.fromEntries(D.counties.map(c => [c.fips, c]));
+let layer = "chaos_score", selected = null, regionOn = null;
+
+// Headlines
+$("#headlines").innerHTML = D.headlines.map(h => `<div class="hl"><b>${h.big}</b><span>${h.text}</span></div>`).join("");
+
+// Region cards
+const short = {hurricanes_per_decade:"Hurricanes", sinkholes_per_1000km2:"Sinkholes", gators_per_10k_obs:"Alligators", homicide_per_100k:"Homicide", crash_deaths_per_100k:"Road deaths"};
+$("#regions").innerHTML = D.regions.map(r => `
+  <div class="rc" tabindex="0" role="button" data-region="${r.region}" aria-label="${r.region}: Reality Score ${Math.round(r.reality_score)}">
+    <span class="conf">${r.confidence} match</span>
+    <h3>${r.region}</h3>
+    <div class="insp">${r.inspiration} · ${r.counties}</div>
+    <div class="score"><b>${Math.round(r.reality_score)}</b><small>/ 100 Reality Score</small></div>
+    <div class="bars">${Object.keys(short).map(k => { const v = r[k + "_pct"]; return `<div class="bar"><span>${short[k]}</span><i><em style="width:${v == null ? 0 : v}%"></em></i><span>${v == null ? "–" : Math.round(v)}</span></div>`; }).join("")}</div>
+  </div>`).join("");
+document.querySelectorAll(".rc").forEach(el => {
+  const act = () => { const r = D.regions.find(x => x.region === el.dataset.region);
+    regionOn = regionOn === r.region ? null : r.region;
+    document.querySelectorAll(".rc").forEach(x => x.classList.toggle("on", x.dataset.region === regionOn));
+    if (regionOn) { select(r.fips[0]); $("#mapbox").scrollIntoView({behavior: "smooth", block: "center"}); }
+    paint(); };
+  el.addEventListener("click", act);
+  el.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+});
+
+// Controls
+$("#controls").innerHTML = D.layers.map(l => `<button type="button" data-k="${l.key}" aria-pressed="${l.key === layer}">${l.label}</button>`).join("");
+$("#controls").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; layer = b.dataset.k;
+  document.querySelectorAll("#controls button").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === layer)); paint(); });
+
+// Map
+const svg = $("#map");
+svg.setAttribute("viewBox", `0 0 ${D.W} ${D.H}`);
+svg.innerHTML = D.counties.map(c => `<path class="c" d="${c.path}" data-f="${c.fips}" tabindex="-1"><title>${c.name}</title></path>`).join("");
+const tip = $("#tip");
+svg.addEventListener("mousemove", e => { const p = e.target.closest("path.c"); if (!p) { tip.style.opacity = 0; return; }
+  const c = byFips[p.dataset.f], L = layerBy[layer], v = c[layer];
+  tip.textContent = `${c.name}: ${layer === "home_value" ? money(v) : fmt(v, L.dp)}${layer === "chaos_score" ? " / 100" : ""}`;
+  const box = $("#mapbox").getBoundingClientRect(); tip.style.left = (e.clientX - box.left + 12) + "px"; tip.style.top = (e.clientY - box.top + 12) + "px"; tip.style.opacity = 1; });
+svg.addEventListener("mouseleave", () => tip.style.opacity = 0);
+svg.addEventListener("click", e => { const p = e.target.closest("path.c"); if (p) select(p.dataset.f); });
+
+function breaks(vals) { const s = vals.filter(v => v != null).sort((a, b) => a - b); return [0.2, 0.4, 0.6, 0.8].map(q => s[Math.floor(q * (s.length - 1))]); }
+function paint() {
+  const vals = D.counties.map(c => c[layer]), br = breaks(vals), L = layerBy[layer];
+  const regF = regionOn ? D.regions.find(r => r.region === regionOn).fips : D.regions.flatMap(r => r.fips);
+  svg.querySelectorAll("path.c").forEach(p => { const c = byFips[p.dataset.f], v = c[layer];
+    p.classList.toggle("na", v == null);
+    p.style.fill = v == null ? "" : D.ramp[br.filter(b => v > b).length];
+    p.classList.toggle("reg", regF.includes(c.fips)); p.classList.toggle("sel", c.fips === selected); });
+  const f = v => layer === "home_value" ? money(v) : fmt(v, L.dp);
+  const lab = i => i === 0 ? `≤ ${f(br[0])}` : i === 4 ? `> ${f(br[3])}` : `${f(br[i - 1])}–${f(br[i])}`;
+  $("#legend").innerHTML = D.ramp.map((col, i) => `<span style="display:inline-flex;flex-direction:column;gap:3px;margin-right:4px;min-width:72px"><span class="sw" style="background:${col};width:100%"></span><span>${lab(i)}</span></span>`).join("") +
+    `<div class="unit">${L.unit} · 5 groups of ~13 counties · grey = no data</div>`;
+}
+
+function rankOf(key, fips) { const s = D.counties.filter(c => c[key] != null).sort((a, b) => b[key] - a[key]); const i = s.findIndex(c => c.fips === fips); return i < 0 ? null : i + 1; }
+function select(f) { selected = f; const c = byFips[f]; const n = D.counties.length;
+  const row = (label, v, key, txt) => `<tr><td>${label}</td><td>${txt ?? v}</td><td>${key && rankOf(key, f) ? "#" + rankOf(key, f) + " of " + D.counties.filter(x => x[key] != null).length : ""}</td></tr>`;
+  $("#panel").innerHTML = `<h3>${c.name} County</h3>
+    <div class="meta">${Number(c.population).toLocaleString("en-CA")} residents · Chaos rank #${c.chaos_rank} of ${n}</div>
+    ${c.regions.map(r => `<span class="tag">GTA 6: ${r}</span>`).join("")}
+    <table>
+      ${row("Reality Score", fmt(c.chaos_score, 0) + " / 100", "chaos_score")}
+      ${row("Hurricanes within 60 nm, 1950-2025", fmt(c.hurricanes_1950_2025, 0) + " (" + fmt(c.major_hurricanes_1950_2025, 0) + " major)", "hurricanes_per_decade")}
+      ${row("Hurricane landfalls since 1851", fmt(c.landfalls_since_1851, 0), "landfalls_since_1851")}
+      ${row("Sinkhole reports", fmt(c.sinkholes, 0) + " (" + fmt(c.sinkholes_per_1000km2, 1) + " per 1,000 km²)", "sinkholes_per_1000km2")}
+      ${row("Alligators per 10k sightings", fmt(c.gators_per_10k_obs, 0) + " (" + fmt(c.alligator_obs, 0) + " gators)", "gators_per_10k_obs")}
+      ${row("Homicides per 100k", fmt(c.homicide_per_100k, 1), "homicide_per_100k")}
+      ${row("Road deaths per 100k", fmt(c.crash_deaths_per_100k, 1), "crash_deaths_per_100k")}
+      ${row("Typical home value", money(c.home_value) + (c.home_value_change_pct == null ? "" : " (" + (c.home_value_change_pct >= 0 ? "+" : "") + fmt(c.home_value_change_pct, 0) + "% in 5 yrs)"), "home_value")}
+    </table>`;
+  paint(); }
+
+// Table
+const tcols = [["name","County",null],["chaos_score","Reality",0],["hurricanes_1950_2025","Hurricanes",0],["landfalls_since_1851","Landfalls",0],["sinkholes_per_1000km2","Sinkholes/1k km²",1],["gators_per_10k_obs","Gators/10k obs",0],["homicide_per_100k","Homicide/100k",1],["crash_deaths_per_100k","Road deaths/100k",1],["home_value","Home value",-1]];
+let sortK = "chaos_score", sortD = -1;
+function table() { const rows = [...D.counties].sort((a, b) => sortK === "name" ? a.name.localeCompare(b.name) * -sortD : ((a[sortK] ?? -1e9) - (b[sortK] ?? -1e9)) * sortD);
+  $("#table").innerHTML = `<thead><tr>${tcols.map(([k, l]) => `<th data-k="${k}" aria-sort="${k === sortK ? (sortD < 0 ? "descending" : "ascending") : "none"}">${l}</th>`).join("")}</tr></thead><tbody>` +
+    rows.map(c => `<tr>${tcols.map(([k, l, dp]) => `<td>${k === "name" ? c.name : dp === -1 ? money(c[k]) : fmt(c[k], dp)}</td>`).join("")}</tr>`).join("") + "</tbody>"; }
+$("#table").addEventListener("click", e => { const th = e.target.closest("th"); if (!th) return; const k = th.dataset.k; sortD = k === sortK ? -sortD : -1; sortK = k; table(); });
+
+select("12086"); table();
+</script>
+</body>
+</html>
