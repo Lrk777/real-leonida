@@ -19,9 +19,9 @@
   .dek{max-width:760px;color:var(--ink2);font-size:18px;margin:0}
   h2{font-size:22px;margin:34px 0 6px;letter-spacing:-.01em}
   .sub{color:var(--ink2);margin:0 0 16px;max-width:780px}
-  .headlines{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:22px}
+  .headlines{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:22px}
   .hl{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-  .hl b{display:block;font-size:24px;line-height:1.15;margin-bottom:4px}
+  .hl b{display:block;font-size:21px;line-height:1.15;margin-bottom:4px}
   .hl span{color:var(--ink2);font-size:14px}
   .regions{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
   .rc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
@@ -75,6 +75,39 @@
   .method li{margin-bottom:6px}
   footer{margin:40px 0 30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
   a{color:#1c5cab}
+  .verdict{display:inline-block;font-size:12px;font-weight:600;border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:middle}
+  .v-wild{background:#fde7e7;color:#9b1c1c} .v-fair{background:#f0efec;color:#55544f} .v-exag{background:#e3eefc;color:#1c4f8f}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:6px 0 4px}
+  .search{font:inherit;font-size:14px;padding:6px 12px;border:1px solid var(--line);border-radius:99px;min-width:220px;background:var(--surface)}
+  .search:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+  .layerdesc{color:var(--ink2);font-size:14px;margin:0 0 10px;min-height:21px}
+  .storms{margin-top:10px;font-size:13px;color:var(--ink2)}
+  .storms b{color:var(--ink)}
+  .finder{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,1.3fr);gap:18px;align-items:start}
+  @media (max-width:860px){.finder{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+  .slider{display:grid;grid-template-columns:110px 1fr 74px;gap:10px;align-items:center;margin:8px 0;font-size:14px}
+  .slider input{width:100%;accent-color:#1c5cab}
+  .slider output{font-size:12px;color:var(--ink2);text-align:right}
+  .budget{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  .results ol{margin:0;padding:0;list-style:none;counter-reset:r}
+  .results li{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:8px 6px;border-top:1px solid var(--line);cursor:pointer;border-radius:6px}
+  .results li:hover,.results li:focus-visible{background:#f6f5f1;outline:none}
+  .results li .n{font-weight:700;color:var(--muted)}
+  .results li .why{font-size:12px;color:var(--ink2)}
+  .results li .m{font-variant-numeric:tabular-nums;font-weight:700}
+  .hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+  .stormbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 10px;font-size:14px}
+  .stormbar select{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);max-width:320px}
+  .stormbar button{font:inherit;font-size:14px;padding:5px 12px;border-radius:99px;border:1px solid #b42318;background:#fff;color:#b42318;cursor:pointer}
+  .stormbar button:disabled{opacity:.4;cursor:default}
+  #stormInfo{color:var(--ink2)}
+  svg#map{overflow:hidden}
+  path.track{fill:none;stroke:#b42318;stroke-width:1.4;stroke-opacity:.35;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+  path.track.on{stroke-width:3.2;stroke-opacity:.95}
+  path.track.off{stroke-opacity:0}
+  .yearbadge{font:700 34px system-ui,sans-serif;fill:#b42318;fill-opacity:.85}
+  .copy{font:inherit;font-size:13px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:var(--surface);cursor:pointer;margin-top:10px}
 </style>
 </head>
 <body>
@@ -89,12 +122,23 @@
 
 <main class="wrap">
   <h2>The six regions of Leonida, scored against real Florida</h2>
-  <p class="sub">Reality Score = how chaotic the real counties are compared with the rest of Florida (0 = calmest county, 100 = most chaotic), averaged over the five layers. 50 is a typical Florida county. Click a card to find it on the map.</p>
+  <p class="sub">Reality Score = how chaotic the real counties are compared with the rest of Florida (0 = calmest county, 100 = most chaotic), averaged over the five layers. 50 is a typical Florida county. Verdict: the game paints every region as chaotic, so 60+ = <b>not exaggerated</b>, 45-59 = <b>fair</b>, under 45 = <b>exaggerated</b>. Click a card to find it on the map.</p>
   <div class="regions" id="regions"></div>
 
   <h2>All 67 Florida counties</h2>
   <p class="sub">Pick a layer. Hover for a value, click a county for its full profile. Pink outlines are the counties a GTA 6 region is based on.</p>
-  <div class="controls" id="controls" role="group" aria-label="Map layer"></div>
+  <div class="toolbar">
+    <div class="controls" id="controls" role="group" aria-label="Map layer"></div>
+    <input class="search" id="search" list="countylist" placeholder="Find a county…" aria-label="Find a county">
+    <datalist id="countylist"></datalist>
+  </div>
+  <p class="layerdesc" id="layerdesc"></p>
+  <div class="stormbar">
+    <label for="trackSel"><b>Hurricane tracks:</b></label>
+    <select id="trackSel"></select>
+    <button type="button" id="play">▶ Play 1950-2025</button>
+    <span id="stormInfo" aria-live="polite"></span>
+  </div>
   <div class="mapgrid">
     <div class="mapbox" id="mapbox">
       <svg id="map" role="img" aria-label="Choropleth map of Florida counties"></svg>
@@ -102,6 +146,13 @@
       <div class="tip" id="tip"></div>
     </div>
     <div class="panel" id="panel"></div>
+  </div>
+
+  <h2>Find your calm corner of Leonida</h2>
+  <p class="sub">Moving to (or visiting) Florida? Tell it what worries you most and your budget. Counties are ranked by how calm they are on the things you care about, and the map switches to "Your match".</p>
+  <div class="finder">
+    <div class="card" id="prefs"></div>
+    <div class="card results"><ol id="results"></ol><p class="hint" id="hint"></p></div>
   </div>
 
   <details>
@@ -134,6 +185,8 @@ let layer = "chaos_score", selected = null, regionOn = null;
 // Headlines
 $("#headlines").innerHTML = D.headlines.map(h => `<div class="hl"><b>${h.big}</b><span>${h.text}</span></div>`).join("");
 
+// Verdict: the game paints every region as chaotic; is the real place?
+function verdict(s) { return s >= 60 ? ["Not exaggerated", "v-wild"] : s >= 45 ? ["Fair", "v-fair"] : ["Exaggerated", "v-exag"]; }
 // Region cards
 const short = {hurricanes_per_decade:"Hurricanes", sinkholes_per_1000km2:"Sinkholes", gators_per_10k_obs:"Alligators", homicide_per_100k:"Homicide", crash_deaths_per_100k:"Road deaths"};
 $("#regions").innerHTML = D.regions.map(r => `
@@ -141,7 +194,7 @@ $("#regions").innerHTML = D.regions.map(r => `
     <span class="conf">${r.confidence} match</span>
     <h3>${r.region}</h3>
     <div class="insp">${r.inspiration} · ${r.counties}</div>
-    <div class="score"><b>${Math.round(r.reality_score)}</b><small>/ 100 Reality Score</small></div>
+    <div class="score"><b>${Math.round(r.reality_score)}</b><small>/ 100</small><span class="verdict ${verdict(r.reality_score)[1]}" title="The game paints every region as chaotic. Is the real place?">${verdict(r.reality_score)[0]}</span></div>
     <div class="bars">${Object.keys(short).map(k => { const v = r[k + "_pct"]; return `<div class="bar"><span>${short[k]}</span><i><em style="width:${v == null ? 0 : v}%"></em></i><span>${v == null ? "–" : Math.round(v)}</span></div>`; }).join("")}</div>
   </div>`).join("");
 document.querySelectorAll(".rc").forEach(el => {
@@ -159,10 +212,27 @@ $("#controls").innerHTML = D.layers.map(l => `<button type="button" data-k="${l.
 $("#controls").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; layer = b.dataset.k;
   document.querySelectorAll("#controls button").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === layer)); paint(); });
 
+// Layer descriptions
+const DESC = {
+  chaos_score: "Average of the five chaos layers, each ranked against all 67 counties. 100 = most chaotic county in Florida.",
+  hurricanes_per_decade: "Hurricanes whose eye passed within 60 nautical miles of the county centre, 1950-2025, per decade. Central counties get storms from both coasts.",
+  sinkholes_per_1000km2: "Sinkhole and ground-collapse reports to the Florida Geological Survey, per 1,000 km². Reports, not all verified.",
+  gators_per_10k_obs: "Out of every 10,000 wildlife photos people logged on iNaturalist in the county, how many were alligators. Small counties have few photos, so read with care.",
+  homicide_per_100k: "Homicide deaths per 100,000 residents per year (CDC death records via County Health Rankings 2025). Grey = too few deaths to publish.",
+  crash_deaths_per_100k: "Motor-vehicle crash deaths per 100,000 residents per year (CDC via County Health Rankings 2025). Rural counties with long, fast roads lead.",
+  home_value: "Typical home value, mid-tier homes (Zillow Home Value Index, latest month). Context only, not part of the score.",
+  match: "Your match score from the finder below: 100 = calmest county on what you said you care about. Grey = over your budget."
+};
+$("#countylist").innerHTML = D.counties.map(c => `<option value="${c.name}">`).join("");
+$("#search").addEventListener("change", e => { const q = e.target.value.trim().toLowerCase();
+  const c = D.counties.find(x => x.name.toLowerCase() === q) || D.counties.find(x => x.name.toLowerCase().startsWith(q));
+  if (c) { select(c.fips); e.target.value = ""; } });
+
 // Map
 const svg = $("#map");
 svg.setAttribute("viewBox", `0 0 ${D.W} ${D.H}`);
-svg.innerHTML = D.counties.map(c => `<path class="c" d="${c.path}" data-f="${c.fips}" tabindex="-1"><title>${c.name}</title></path>`).join("");
+svg.innerHTML = D.counties.map(c => `<path class="c" d="${c.path}" data-f="${c.fips}" tabindex="-1"><title>${c.name}</title></path>`).join("") +
+  `<g id="tracks">${(D.tracks || []).map((t, i) => `<path class="track off" data-i="${i}" d="M${t.pts.map(p => p[0] + "," + p[1]).join("L")}"></path>`).join("")}</g><text id="yearbadge" class="yearbadge" x="${D.W - 20}" y="60" text-anchor="end"></text>`;
 const tip = $("#tip");
 svg.addEventListener("mousemove", e => { const p = e.target.closest("path.c"); if (!p) { tip.style.opacity = 0; return; }
   const c = byFips[p.dataset.f], L = layerBy[layer], v = c[layer];
@@ -174,6 +244,8 @@ svg.addEventListener("click", e => { const p = e.target.closest("path.c"); if (p
 function breaks(vals) { const s = vals.filter(v => v != null).sort((a, b) => a - b); return [0.2, 0.4, 0.6, 0.8].map(q => s[Math.floor(q * (s.length - 1))]); }
 function paint() {
   const vals = D.counties.map(c => c[layer]), br = breaks(vals), L = layerBy[layer];
+  $("#layerdesc").textContent = DESC[layer] || "";
+  if (selected) history.replaceState(null, "", `#county=${selected}&layer=${layer}`);
   const regF = regionOn ? D.regions.find(r => r.region === regionOn).fips : D.regions.flatMap(r => r.fips);
   svg.querySelectorAll("path.c").forEach(p => { const c = byFips[p.dataset.f], v = c[layer];
     p.classList.toggle("na", v == null);
@@ -200,8 +272,44 @@ function select(f) { selected = f; const c = byFips[f]; const n = D.counties.len
       ${row("Homicides per 100k", fmt(c.homicide_per_100k, 1), "homicide_per_100k")}
       ${row("Road deaths per 100k", fmt(c.crash_deaths_per_100k, 1), "crash_deaths_per_100k")}
       ${row("Typical home value", money(c.home_value) + (c.home_value_change_pct == null ? "" : " (" + (c.home_value_change_pct >= 0 ? "+" : "") + fmt(c.home_value_change_pct, 0) + "% in 5 yrs)"), "home_value")}
-    </table>`;
+    </table>
+    ${c.landfalls.length ? `<div class="storms"><b>Strongest hurricanes to make landfall here:</b> ${c.landfalls.slice(0, 4).map(s => `${s[0]} ${s[1]} (${cat(s[2])})`).join(" · ")}</div>` : `<div class="storms">No hurricane has made landfall in this county since 1851 (storms can still pass nearby).</div>`}
+    <button type="button" class="copy" id="copylink">Copy link to ${c.name}</button>`;
+  $("#copylink").onclick = () => { const u = location.href.split("#")[0] + `#county=${f}&layer=${layer}`;
+    (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => $("#copylink").textContent = "Link copied", () => $("#copylink").textContent = u); };
   paint(); }
+function cat(kt) { return kt >= 137 ? "Cat 5" : kt >= 113 ? "Cat 4" : kt >= 96 ? "Cat 3" : kt >= 83 ? "Cat 2" : "Cat 1"; }
+
+// Hurricane tracks: every Cat 3+ hurricane to make landfall in Florida since 1950
+const tracks = D.tracks || [], tpaths = [...svg.querySelectorAll("path.track")];
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+$("#trackSel").innerHTML = `<option value="none">Off</option><option value="all">All ${tracks.length} major landfalls since 1950</option>` +
+  tracks.map((t, i) => `<option value="${i}">${t.name} ${t.year} (${cat(t.landfall_kt)} at landfall)</option>`).join("");
+let playing = null;
+function stopPlay() { if (playing) { clearTimeout(playing); playing = null; $("#play").textContent = "▶ Play 1950-2025"; } $("#yearbadge").textContent = ""; }
+function describe(t) { return `${t.name} ${t.year}: ${cat(t.landfall_kt)} at landfall (${t.landfall_kt} kt) in ${t.counties.join(", ")}`; }
+function draw(el) { if (reduce || !el.getTotalLength) return; const L = el.getTotalLength(); el.style.transition = "none"; el.style.strokeDasharray = L; el.style.strokeDashoffset = L;
+  el.getBoundingClientRect(); el.style.transition = "stroke-dashoffset 1.2s ease-out"; el.style.strokeDashoffset = 0; }
+function showTracks(v) {
+  tpaths.forEach(p => { p.classList.remove("on"); p.style.strokeDasharray = ""; p.style.strokeDashoffset = ""; p.classList.toggle("off", v === "none"); });
+  if (v === "none") { $("#stormInfo").textContent = ""; return; }
+  if (v === "all") { $("#stormInfo").textContent = `${tracks.length} major hurricanes made landfall in Florida, 1950-2025. Pick one or press Play.`; return; }
+  const i = +v; tpaths.forEach((p, j) => p.classList.toggle("off", j !== i)); tpaths[i].classList.add("on"); draw(tpaths[i]);
+  $("#stormInfo").textContent = describe(tracks[i]);
+}
+$("#trackSel").addEventListener("change", e => { stopPlay(); showTracks(e.target.value); });
+$("#play").disabled = !tracks.length;
+$("#play").addEventListener("click", () => {
+  if (playing) { stopPlay(); return; }
+  $("#trackSel").value = "all"; tpaths.forEach(p => { p.classList.add("off"); p.classList.remove("on"); });
+  $("#play").textContent = "■ Stop"; let i = 0;
+  const step = () => { if (i > 0) tpaths[i - 1].classList.remove("on");
+    if (i >= tracks.length) { playing = null; $("#play").textContent = "▶ Play 1950-2025"; showTracks("all"); $("#yearbadge").textContent = ""; return; }
+    const p = tpaths[i]; p.classList.remove("off"); p.classList.add("on"); draw(p);
+    $("#yearbadge").textContent = tracks[i].year; $("#stormInfo").textContent = describe(tracks[i]); i++; playing = setTimeout(step, reduce ? 500 : 1300); };
+  step();
+});
+showTracks("none");
 
 // Table
 const tcols = [["name","County",null],["chaos_score","Reality",0],["hurricanes_1950_2025","Hurricanes",0],["landfalls_since_1851","Landfalls",0],["sinkholes_per_1000km2","Sinkholes/1k km²",1],["gators_per_10k_obs","Gators/10k obs",0],["homicide_per_100k","Homicide/100k",1],["crash_deaths_per_100k","Road deaths/100k",1],["home_value","Home value",-1]];
@@ -211,7 +319,40 @@ function table() { const rows = [...D.counties].sort((a, b) => sortK === "name" 
     rows.map(c => `<tr>${tcols.map(([k, l, dp]) => `<td>${k === "name" ? c.name : dp === -1 ? money(c[k]) : fmt(c[k], dp)}</td>`).join("")}</tr>`).join("") + "</tbody>"; }
 $("#table").addEventListener("click", e => { const th = e.target.closest("th"); if (!th) return; const k = th.dataset.k; sortD = k === sortK ? -sortD : -1; sortK = k; table(); });
 
-select("12086"); table();
+// Finder
+const RISKS = [["hurricanes_per_decade", "Hurricanes"], ["sinkholes_per_1000km2", "Sinkholes"], ["gators_per_10k_obs", "Alligators"], ["homicide_per_100k", "Crime"], ["crash_deaths_per_100k", "Road safety"]];
+const LVL = ["Don't care", "A little", "Matters", "Top worry"];
+const W = {hurricanes_per_decade: 2, sinkholes_per_1000km2: 1, gators_per_10k_obs: 1, homicide_per_100k: 2, crash_deaths_per_100k: 1};
+let budget = 0;
+D.layers.push({key: "match", label: "Your match", unit: "match score (0-100, higher = calmer for you)", dp: 0, chaos: false});
+layerBy.match = D.layers[D.layers.length - 1];
+$("#controls").innerHTML = D.layers.map(l => `<button type="button" data-k="${l.key}" aria-pressed="${l.key === layer}">${l.label}</button>`).join("");
+$("#prefs").innerHTML = `<b>What worries you?</b>` + RISKS.map(([k, l]) =>
+  `<div class="slider"><label for="w_${k}">${l}</label><input type="range" id="w_${k}" min="0" max="3" step="1" value="${W[k]}"><output id="o_${k}">${LVL[W[k]]}</output></div>`).join("") +
+  `<div class="slider"><label for="budget">Budget</label><select class="budget" id="budget"><option value="0">Any price</option><option value="250000">Under $250k</option><option value="300000">Under $300k</option><option value="400000">Under $400k</option><option value="500000">Under $500k</option></select><span></span></div>`;
+RISKS.forEach(([k]) => $("#w_" + k).addEventListener("input", e => { W[k] = +e.target.value; $("#o_" + k).textContent = LVL[W[k]]; rank(true); }));
+$("#budget").addEventListener("change", e => { budget = +e.target.value; rank(true); });
+function rank(show) {
+  const tot = Object.values(W).reduce((a, b) => a + b, 0);
+  D.counties.forEach(c => {
+    if (budget && (c.home_value == null || c.home_value > budget)) { c.match = null; return; }
+    let s = 0, w = 0;
+    RISKS.forEach(([k]) => { const p = c[k + "_pct"]; if (p != null && W[k]) { s += (100 - p) * W[k]; w += W[k]; } });
+    c.match = tot === 0 ? null : w ? s / w : null;
+  });
+  const top = D.counties.filter(c => c.match != null).sort((a, b) => b.match - a.match).slice(0, 8);
+  $("#results").innerHTML = top.map((c, i) => { const best = RISKS.filter(([k]) => W[k] && c[k + "_pct"] != null).sort((a, b) => c[a[0] + "_pct"] - c[b[0] + "_pct"]).slice(0, 2).map(x => x[1].toLowerCase());
+    return `<li tabindex="0" data-f="${c.fips}"><span class="n">${i + 1}</span><span><b>${c.name}</b>${c.regions.length ? ` <span class="tag">${c.regions[0]}</span>` : ""}<br><span class="why">Calm on ${best.join(" and ")} · ${money(c.home_value)} typical home</span></span><span class="m">${Math.round(c.match)}</span></li>`; }).join("");
+  $("#hint").textContent = tot === 0 ? "Move at least one slider to rank counties." : top.length ? "Click a county to see it on the map. Match = 100 means calmest in Florida on everything you picked." : "No county fits that budget. Try a higher one.";
+  if (show) { layer = "match"; document.querySelectorAll("#controls button").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === layer)); }
+  paint();
+}
+$("#results").addEventListener("click", e => { const li = e.target.closest("li"); if (li) { select(li.dataset.f); $("#mapbox").scrollIntoView({behavior: "smooth", block: "center"}); } });
+$("#results").addEventListener("keydown", e => { const li = e.target.closest("li"); if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(li.dataset.f); } });
+
+const H = Object.fromEntries(location.hash.slice(1).split("&").filter(Boolean).map(kv => kv.split("=")));
+if (H.layer && layerBy[H.layer] && H.layer !== "match") { layer = H.layer; document.querySelectorAll("#controls button").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === layer)); }
+table(); rank(false); select(byFips[H.county] ? H.county : "12086");
 </script>
 </body>
 </html>
