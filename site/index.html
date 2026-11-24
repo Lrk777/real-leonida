@@ -337,13 +337,14 @@ function rank(show) {
   D.counties.forEach(c => {
     if (budget && (c.home_value == null || c.home_value > budget)) { c.match = null; return; }
     let s = 0, w = 0;
-    RISKS.forEach(([k]) => { const p = c[k + "_pct"]; if (p != null && W[k]) { s += (100 - p) * W[k]; w += W[k]; } });
+    // a layer the source suppressed (e.g. homicide in tiny counties) counts as a typical county (50), not as calm
+    RISKS.forEach(([k]) => { const p = c[k + "_pct"] ?? 50; if (W[k]) { s += (100 - p) * W[k]; w += W[k]; } });
     c.match = tot === 0 ? null : w ? s / w : null;
   });
   const top = D.counties.filter(c => c.match != null).sort((a, b) => b.match - a.match).slice(0, 8);
   $("#results").innerHTML = top.map((c, i) => { const best = RISKS.filter(([k]) => W[k] && c[k + "_pct"] != null).sort((a, b) => c[a[0] + "_pct"] - c[b[0] + "_pct"]).slice(0, 2).map(x => x[1].toLowerCase());
     return `<li tabindex="0" data-f="${c.fips}"><span class="n">${i + 1}</span><span><b>${c.name}</b>${c.regions.length ? ` <span class="tag">${c.regions[0]}</span>` : ""}<br><span class="why">Calm on ${best.join(" and ")} · ${money(c.home_value)} typical home</span></span><span class="m">${Math.round(c.match)}</span></li>`; }).join("");
-  $("#hint").textContent = tot === 0 ? "Move at least one slider to rank counties." : top.length ? "Click a county to see it on the map. Match = 100 means calmest in Florida on everything you picked." : "No county fits that budget. Try a higher one.";
+  $("#hint").textContent = tot === 0 ? "Move at least one slider to rank counties." : top.length ? "Click a county to see it on the map. Match = 100 means calmest in Florida on everything you picked. Missing data counts as average." : "No county fits that budget. Try a higher one.";
   if (show) { layer = "match"; document.querySelectorAll("#controls button").forEach(x => x.setAttribute("aria-pressed", x.dataset.k === layer)); }
   paint();
 }
