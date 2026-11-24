@@ -105,8 +105,11 @@ def load_sinkholes(index, names, dq):
                      "lon": lon, "lat": lat, "fips": fips,
                      "year": (datetime(1970, 1, 1) + timedelta(milliseconds=a["EVENT_DATE"])).year if a.get("EVENT_DATE") else None})
     df = pd.DataFrame(rows)
-    dq.check("sinkholes: no duplicate report numbers", not df.ref.dropna().duplicated().any(),
-             f"{df.ref.dropna().duplicated().sum()} duplicates", hard=False)
+    dups = df.ref.notna() & df.duplicated(subset=["ref", "lon", "lat"], keep="first")
+    dq.check("sinkholes: exact duplicate reports removed", True, f"{int(dups.sum())} removed", hard=False)
+    df = df[~dups].copy()
+    dq.check("sinkholes: report numbers unique after de-duplication", not df.ref.dropna().duplicated().any(),
+             f"{df.ref.dropna().duplicated().sum()} report numbers reused at different locations (kept)", hard=False)
     # fall back to the county field when the point is missing / outside Florida
     lookup = {norm(n): f for f, n in names.items()}
     miss = df.fips.isna()
@@ -130,6 +133,47 @@ def load_gbif(names, dq):
     dq.check("GBIF: 67 counties", g.fips.nunique() == 67, f"{g.fips.nunique()}")
     g["gators_per_10k_obs"] = g.alligator_obs / g.all_obs * 10000
     return g[["fips", "all_obs", "alligator_obs", "gators_per_10k_obs"]]
+
+
+REGION_OF = {c: r["region"] for r in config.REGIONS for c in r["counties"]}
+
+
+def _in_game(fips):
+    r = [x["region"] for x in config.REGIONS if fips in x["counties"]]
+    return f" (GTA 6: {' / '.join(r)})" if r else ""
+
+
+def headlines(df, reg, min_obs=20000):
+    """Plain-English headline cards, computed from the data so they stay true after every rebuild."""
+    out = []
+    n = len(df)
+    top = reg.iloc[0]
+    worst_c = df[df.fips.isin(next(r["counties"] for r in config.REGIONS if r["region"] == top.region))].iloc[0]
+    out.append({"big": f"{top.region} is the real chaos capital",
+                "text": f"Its real counties ({top.counties}) score {top.reality_score:.0f}/100, the highest of the six regions. "
+                        f"{worst_c['name']} is #{int(worst_c.chaos_rank)} of {n} Florida counties."})
+    vc = df[df.fips == "12086"].iloc[0]
+    rk = lambda col: int(df[col].rank(ascending=False, method="min")[df.fips == "12086"].iloc[0])
+    out.append({"big": f"Real Vice City ranks #{int(vc.chaos_rank)} of {n}",
+                "text": f"Miami-Dade scores {vc.chaos_score:.0f}/100, close to a typical Florida county. Homicide rate: #{rk('homicide_per_100k')} of "
+                        f"{int(df.homicide_per_100k.notna().sum())}. Road deaths: #{rk('crash_deaths_per_100k')} of {n}. Home prices: #{rk('home_value')}."})
+    lf = df.nlargest(1, "landfalls_since_1851").iloc[0]
+    out.append({"big": f"{int(lf.landfalls_since_1851)} hurricanes came ashore",
+                "text": f"More hurricanes have made landfall in {lf['name']} County{_in_game(lf.fips)} since 1851 than in any other Florida county."})
+    sk = df.nlargest(1, "sinkholes_per_1000km2").iloc[0]
+    sk_regions = [c for c in df.nlargest(5, "sinkholes_per_1000km2").fips if c in REGION_OF]
+    out.append({"big": f"{sk.sinkholes_per_1000km2:.0f} sinkholes per 1,000 km²",
+                "text": f"{sk['name']} County{_in_game(sk.fips)} leads Florida for reported sinkholes. "
+                        + ("None of the top 5 sinkhole counties is in a GTA 6 region." if not sk_regions
+                           else "")})
+    big = df[df.all_obs >= min_obs]
+    if big.empty:  # tiny test datasets
+        big, min_obs = df, 0
+    g = big.nlargest(1, "gators_per_10k_obs").iloc[0]
+    out.append({"big": f"1 in {10000 / g.gators_per_10k_obs:.0f} wildlife sightings is a gator",
+                "text": f"In {g['name']} County{_in_game(g.fips)}, alligators make up {g.gators_per_10k_obs / 100:.1f}% of all iNaturalist wildlife observations, "
+                        f"the most of any county with {min_obs:,}+ observations."})
+    return out
 
 
 def pct_rank(s):
@@ -160,7 +204,9 @@ def main():
     hur = pd.DataFrame([{"fips": f, "hurricanes_1950_2025": v["hurricanes"], "major_hurricanes_1950_2025": v["major"]}
                         for f, v in passes.items()])
     hur["hurricanes_per_decade"] = hur.hurricanes_1950_2025 / years * 10
-    hur["landfalls_since_1851"] = hur.fips.map(lambda f: int((lf_fl.fips == f).sum()) if len(lf_fl) else 0)
+    # a storm can cross several Keys and log more than one landfall record: count distinct storms
+    lf_storms = lf_fl.groupby("fips").storm.nunique() if len(lf_fl) else pd.Series(dtype=int)
+    hur["landfalls_since_1851"] = hur.fips.map(lf_storms).fillna(0).astype(int)
 
     sink = load_sinkholes(fl_index, names, dq)
     sk = sink.groupby("fips").size().rename("sinkholes").reset_index()
@@ -203,7 +249,7 @@ def main():
         "data_window": {"hurricane_passes": f"{config.PASS_START_YEAR}-2025", "landfalls": "1851-2025",
                         "zillow_latest": zh_latest, "zillow_compared_with": zh_past},
         "statewide": {
-            "hurricane_landfalls_florida_since_1851": int(len(lf_fl)),
+            "hurricanes_making_landfall_in_florida_since_1851": int(lf_fl.storm.nunique()) if len(lf_fl) else 0,
             "sinkhole_reports": int(len(sink)),
             "inat_alligator_obs": int(df.alligator_obs.sum()),
             "inat_all_obs": int(df.all_obs.sum()),
@@ -241,12 +287,28 @@ def main():
     if len(lf_fl):
         lf_fl.sort_values("date").to_csv(os.path.join(OUT, "florida_hurricane_landfalls.csv"), index=False)
     pd.DataFrame(dq.rows).to_csv(os.path.join(OUT, "dq_report.csv"), index=False)
+
+    heads = headlines(df, reg)
+    findings["headlines"] = heads
     with open(os.path.join(OUT, "findings.json"), "w") as fh:
         json.dump(findings, fh, indent=2, default=float)
 
     # Site data: county paths + metrics
     from .site import write_site
-    write_site(fl_feats, df, reg, findings, config)
+    # Tracks of every major hurricane (Cat 3+ at landfall) to hit Florida since 1950, for the map overlay
+    major_ids = set(lf_fl[(lf_fl.wind_kt >= config.MAJOR_KT) & (lf_fl.year >= config.PASS_START_YEAR)].storm) if len(lf_fl) else set()
+    tracks = []
+    for s in storms:
+        if s["id"] in major_ids:
+            fl_pts = lf_fl[lf_fl.storm == s["id"]]
+            tracks.append({"id": s["id"], "name": s["name"].title(), "year": s["year"],
+                           "landfall_kt": int(fl_pts.wind_kt.max()),
+                           "counties": sorted(set(names[f] for f in fl_pts.fips)),
+                           "pts": [[p["lon"], p["lat"], p["wind"]] for p in s["points"]]})
+    tracks.sort(key=lambda t: t["year"])
+    write_site(fl_feats, df, reg, findings, config, landfalls=lf_fl, headlines=heads, tracks=tracks)
+    from .readme import write_readme
+    write_readme(df, reg, heads, findings, dq.rows)
     print(f"built: {len(df)} counties, {len(reg)} regions, {sum(r['passed'] for r in dq.rows)}/{len(dq.rows)} DQ checks passed")
 
 

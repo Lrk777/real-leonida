@@ -3,8 +3,6 @@ import json
 import math
 import os
 
-import pandas as pd
-
 LAYERS = [
     # key, button label, unit text, decimals, part of chaos score?
     ("chaos_score", "Chaos score", "Reality Score (0-100, higher = more chaotic)", 0, False),
@@ -12,7 +10,7 @@ LAYERS = [
     ("sinkholes_per_1000km2", "Sinkholes", "sinkhole reports per 1,000 km²", 1, True),
     ("gators_per_10k_obs", "Alligators", "alligators per 10,000 wildlife sightings", 0, True),
     ("homicide_per_100k", "Homicide", "homicides per 100,000 residents", 1, True),
-    ("crash_deaths_per_100k", "Crash deaths", "road deaths per 100,000 residents", 1, True),
+    ("crash_deaths_per_100k", "Road deaths", "road deaths per 100,000 residents", 1, True),
     ("home_value", "Home prices", "typical home value (Zillow)", 0, False),
 ]
 
@@ -54,7 +52,7 @@ def _path(geom, proj):
     return "".join(out)
 
 
-def write_site(features, df, regions, findings, config):
+def write_site(features, df, regions, findings, config, landfalls=None, headlines=None, tracks=None):
     os.makedirs(config.SITE_DIR, exist_ok=True)
     proj, W, H = _project(features)
     paths = {f["id"]: _path(f["geometry"], proj) for f in features}
@@ -67,11 +65,19 @@ def write_site(features, df, regions, findings, config):
             "landfalls_since_1851", "sinkholes", "sinkholes_per_1000km2", "alligator_obs", "all_obs",
             "gators_per_10k_obs", "homicide_per_100k", "crash_deaths_per_100k", "home_value", "home_value_change_pct",
             "chaos_score", "chaos_rank"] + [k + "_pct" for k in config.CHAOS_LAYERS]
+    lf_by = {}
+    if landfalls is not None and len(landfalls):
+        strongest = (landfalls.sort_values("wind_kt", ascending=False)
+                     .drop_duplicates(subset=["fips", "storm"]).sort_values(["wind_kt", "year"], ascending=[False, False]))
+        for row in strongest.itertuples():
+            name = row.name.title() if row.name != "UNNAMED" else "Unnamed"
+            lf_by.setdefault(row.fips, []).append([name, int(row.year), int(row.wind_kt)])
     counties = []
     for r in df[cols].to_dict(orient="records"):
         r = {k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
         r["path"] = paths[r["fips"]]
         r["regions"] = region_of.get(r["fips"], [])
+        r["landfalls"] = lf_by.get(r["fips"], [])
         counties.append(r)
 
     regs = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
@@ -79,10 +85,15 @@ def write_site(features, df, regions, findings, config):
     for r in regs:
         r["fips"] = next(x["counties"] for x in config.REGIONS if x["region"] == r["region"])
 
-    headlines_path = os.path.join("src", "headlines.json")
-    headlines = json.load(open(headlines_path)) if os.path.exists(headlines_path) else []
+    headlines = headlines or []
+
+    storm_tracks = []
+    for t in tracks or []:
+        pts = [[round(x, 1), round(y, 1), int(w)] for x, y, w in ((*proj(lon, lat), w) for lon, lat, w in t["pts"])]
+        storm_tracks.append({**{k: t[k] for k in ("id", "name", "year", "landfall_kt", "counties")}, "pts": pts})
 
     payload = {
+        "tracks": storm_tracks,
         "W": round(W), "H": round(H), "counties": counties, "regions": regs,
         "layers": [{"key": k, "label": l, "unit": u, "dp": d, "chaos": c} for k, l, u, d, c in LAYERS],
         "ramp": RAMP, "headlines": headlines, "findings": findings,
