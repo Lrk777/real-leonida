@@ -1,0 +1,16 @@
+check,passed,severity,detail
+67 Florida counties in shapes,True,hard,found 67
+population: 67 counties,True,hard,found 67
+population: all positive,True,hard,
+HURDAT2: parsed storms,True,hard,1988 storms
+HURDAT2: latest season present,True,hard,
+sinkholes: no duplicate report numbers,False,soft,10 duplicates
+sinkholes: >= 98% assigned to a county,True,hard,100.0% assigned
+sinkholes: point location agrees with county field,True,soft,99.1% agree
+GBIF: every county name matched,True,hard,unmatched: []
+GBIF: 67 counties,True,hard,67
+CHR: 67 counties,True,hard,found 67
+CHR: crash-death rate present for every county,True,soft,0 missing
+CHR: homicide rate present,False,soft,9 suppressed (small counts)
+Zillow: Florida counties covered,True,soft,67 counties
+"joined table: 67 rows, unique FIPS",True,hard,

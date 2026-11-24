@@ -1,0 +1,358 @@
+{
+  "data_window": {
+    "hurricane_passes": "1950-2025",
+    "landfalls": "1851-2025",
+    "zillow_latest": "2026-10-31",
+    "zillow_compared_with": "2021-10-31"
+  },
+  "statewide": {
+    "hurricane_landfalls_florida_since_1851": 131,
+    "sinkhole_reports": 4470,
+    "inat_alligator_obs": 41586,
+    "inat_all_obs": 3996158
+  },
+  "most_chaotic_counties": [
+    [
+      "Okeechobee",
+      75.5
+    ],
+    [
+      "Glades",
+      74.3
+    ],
+    [
+      "Hendry",
+      73.6
+    ],
+    [
+      "Hardee",
+      72.6
+    ],
+    [
+      "Orange",
+      71.5
+    ],
+    [
+      "Dixie",
+      69.5
+    ],
+    [
+      "Putnam",
+      65.8
+    ],
+    [
+      "Hillsborough",
+      65.8
+    ],
+    [
+      "Highlands",
+      65.3
+    ],
+    [
+      "Polk",
+      65.2
+    ]
+  ],
+  "least_chaotic_counties": [
+    [
+      "Bradford",
+      33.3
+    ],
+    [
+      "Clay",
+      29.0
+    ],
+    [
+      "Flagler",
+      28.2
+    ],
+    [
+      "St. Johns",
+      28.2
+    ],
+    [
+      "Santa Rosa",
+      19.5
+    ]
+  ],
+  "top_hurricanes_per_decade": [
+    [
+      "Okeechobee",
+      2.11
+    ],
+    [
+      "Indian River",
+      2.11
+    ],
+    [
+      "St. Lucie",
+      1.97
+    ],
+    [
+      "Glades",
+      1.84
+    ],
+    [
+      "Hendry",
+      1.84
+    ]
+  ],
+  "top_major_hurricanes": [
+    [
+      "Hendry",
+      8
+    ],
+    [
+      "Collier",
+      8
+    ],
+    [
+      "Glades",
+      6
+    ],
+    [
+      "Lee",
+      6
+    ],
+    [
+      "Monroe",
+      6
+    ]
+  ],
+  "top_landfalls": [
+    [
+      "Monroe",
+      28
+    ],
+    [
+      "Bay",
+      11
+    ],
+    [
+      "Miami-Dade",
+      10
+    ],
+    [
+      "Lee",
+      7
+    ],
+    [
+      "Franklin",
+      7
+    ]
+  ],
+  "top_sinkholes_per_1000km2": [
+    [
+      "Citrus",
+      290.76
+    ],
+    [
+      "Hernando",
+      246.38
+    ],
+    [
+      "Hillsborough",
+      219.66
+    ],
+    [
+      "Seminole",
+      192.5
+    ],
+    [
+      "Pasco",
+      175.97
+    ]
+  ],
+  "top_gators_per_10k_obs": [
+    [
+      "Jefferson",
+      428.67
+    ],
+    [
+      "Collier",
+      273.0
+    ],
+    [
+      "Wakulla",
+      238.08
+    ],
+    [
+      "Alachua",
+      175.1
+    ],
+    [
+      "Orange",
+      170.83
+    ]
+  ],
+  "top_homicide_per_100k": [
+    [
+      "Hamilton",
+      21.21
+    ],
+    [
+      "Gadsden",
+      15.51
+    ],
+    [
+      "Duval",
+      14.27
+    ],
+    [
+      "Jackson",
+      10.5
+    ],
+    [
+      "Union",
+      10.2
+    ]
+  ],
+  "top_crash_deaths_per_100k": [
+    [
+      "Putnam",
+      45.55
+    ],
+    [
+      "Okeechobee",
+      38.81
+    ],
+    [
+      "Levy",
+      38.75
+    ],
+    [
+      "Glades",
+      38.24
+    ],
+    [
+      "Gilchrist",
+      35.93
+    ]
+  ],
+  "top_home_value": [
+    [
+      "Monroe",
+      969528.89
+    ],
+    [
+      "Walton",
+      654727.78
+    ],
+    [
+      "Collier",
+      554671.09
+    ],
+    [
+      "Miami-Dade",
+      524771.81
+    ],
+    [
+      "St. Johns",
+      488779.58
+    ]
+  ],
+  "miami_dade": {
+    "chaos_rank": 29,
+    "chaos_score": 53.5,
+    "hurricanes_per_decade": 1.45,
+    "sinkholes_per_1000km2": 0.77,
+    "gators_per_10k_obs": 139.55,
+    "homicide_per_100k": 8.04,
+    "crash_deaths_per_100k": 12.21,
+    "hurricanes_per_decade_rank": 15,
+    "sinkholes_per_1000km2_rank": 52,
+    "gators_per_10k_obs_rank": 10,
+    "homicide_per_100k_rank": 15,
+    "crash_deaths_per_100k_rank": 64,
+    "home_value": 524772.0,
+    "home_value_rank": 4
+  },
+  "regions": [
+    {
+      "region": "Ambrosia",
+      "inspiration": "Lake Okeechobee sugar country (Clewiston)",
+      "confidence": "medium",
+      "counties": "Glades, Hendry",
+      "population": 59262,
+      "reality_score": 73.9,
+      "hurricanes_per_decade_pct": 92.5,
+      "sinkholes_per_1000km2_pct": 15.7,
+      "gators_per_10k_obs_pct": 88.8,
+      "homicide_per_100k_pct": 84.5,
+      "crash_deaths_per_100k_pct": 93.3
+    },
+    {
+      "region": "Vice City",
+      "inspiration": "Miami",
+      "confidence": "high",
+      "counties": "Miami-Dade",
+      "population": 2838461,
+      "reality_score": 53.5,
+      "hurricanes_per_decade_pct": 75.4,
+      "sinkholes_per_1000km2_pct": 23.9,
+      "gators_per_10k_obs_pct": 86.6,
+      "homicide_per_100k_pct": 75.9,
+      "crash_deaths_per_100k_pct": 6.0
+    },
+    {
+      "region": "Mount Kalaga",
+      "inspiration": "North Florida forests (+ Providence Canyon, Georgia)",
+      "confidence": "low",
+      "counties": "Marion, Liberty",
+      "population": 436860,
+      "reality_score": 49.8,
+      "hurricanes_per_decade_pct": 20.5,
+      "sinkholes_per_1000km2_pct": 59.0,
+      "gators_per_10k_obs_pct": 42.5,
+      "homicide_per_100k_pct": 77.6,
+      "crash_deaths_per_100k_pct": 70.9
+    },
+    {
+      "region": "Leonida Keys",
+      "inspiration": "Florida Keys",
+      "confidence": "high",
+      "counties": "Monroe",
+      "population": 80908,
+      "reality_score": 47.2,
+      "hurricanes_per_decade_pct": 83.6,
+      "sinkholes_per_1000km2_pct": 13.4,
+      "gators_per_10k_obs_pct": 74.6,
+      "homicide_per_100k_pct": 24.1,
+      "crash_deaths_per_100k_pct": 40.3
+    },
+    {
+      "region": "Grassrivers",
+      "inspiration": "The Everglades / Big Cypress",
+      "confidence": "medium",
+      "counties": "Monroe, Collier",
+      "population": 497141,
+      "reality_score": 44.4,
+      "hurricanes_per_decade_pct": 83.6,
+      "sinkholes_per_1000km2_pct": 17.2,
+      "gators_per_10k_obs_pct": 86.6,
+      "homicide_per_100k_pct": 13.8,
+      "crash_deaths_per_100k_pct": 20.9
+    },
+    {
+      "region": "Port Gellhorn",
+      "inspiration": "Panama City / Panhandle Gulf coast",
+      "confidence": "medium",
+      "counties": "Bay",
+      "population": 199718,
+      "reality_score": 43.8,
+      "hurricanes_per_decade_pct": 54.5,
+      "sinkholes_per_1000km2_pct": 26.9,
+      "gators_per_10k_obs_pct": 44.8,
+      "homicide_per_100k_pct": 48.3,
+      "crash_deaths_per_100k_pct": 44.8
+    }
+  ],
+  "florida_median": {
+    "hurricanes_per_decade": 1.18,
+    "sinkholes_per_1000km2": 4.36,
+    "gators_per_10k_obs": 51.62,
+    "homicide_per_100k": 5.75,
+    "crash_deaths_per_100k": 20.85,
+    "home_value": 302690.36
+  }
+}

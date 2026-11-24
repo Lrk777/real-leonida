@@ -1,0 +1,40 @@
+{
+  "retrieved_utc": "2026-11-24T21:35:11+00:00",
+  "files": {
+    "hurdat2.txt": {
+      "source": "https://www.nhc.noaa.gov/data/hurdat/hurdat2-1851-2025-092326.txt",
+      "bytes": 7071568,
+      "sha256": "75202780ce56c8458f16fbef5fb8a026b99b00878dbb95c458211b3e6ef125b4"
+    },
+    "counties.geojson": {
+      "source": "https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json",
+      "bytes": 3216816,
+      "sha256": "e540149b7525e71ee6b6cab6dea2a95205f11e0c3e7374d27a7c9c47ea96e8c0"
+    },
+    "population.csv": {
+      "source": "https://www2.census.gov/programs-surveys/popest/datasets/2020-2024/counties/totals/co-est2024-alldata.csv",
+      "bytes": 1769182,
+      "sha256": "abcc8720d669e793bbfdcd440eeec37a78db3b452adbe4ccd1eadf7c72b522b9"
+    },
+    "chr_2025.csv": {
+      "source": "https://www.countyhealthrankings.org/sites/default/files/media/document/analytic_data2025_v3.csv",
+      "bytes": 13085361,
+      "sha256": "5a129b856489fe6646013d7fcf85397dd576f6d67a65f5db72738a1df29643de"
+    },
+    "zhvi_county.csv": {
+      "source": "https://files.zillowstatic.com/research/public_csvs/zhvi/County_zhvi_uc_sfrcondo_tier_0.33_0.67_sm_sa_month.csv",
+      "bytes": 13601878,
+      "sha256": "4e548afbc01d7b35cd9f9448766345739fa9881ea776e9fb1f734284ba847521"
+    },
+    "sinkholes.json": {
+      "source": "https://ca.dep.state.fl.us/arcgis/rest/services/OpenData/FGS_SUBSIDENCE/MapServer/0/query",
+      "bytes": 1034899,
+      "sha256": "60ecf050fe07e9149fe2dffea37f95d52e2d06edcfb23388f22aac9821af2a4a"
+    },
+    "gbif_inat_florida.json": {
+      "source": "https://api.gbif.org/v1/occurrence/search",
+      "bytes": 7000,
+      "sha256": "0d5cd1ec2044cb03ffaba85a813dbd996d6962f56b06765aedcf43125fec810a"
+    }
+  }
+}

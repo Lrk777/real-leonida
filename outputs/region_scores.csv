@@ -1,0 +1,7 @@
+region,inspiration,confidence,counties,population,reality_score,hurricanes_per_decade_pct,sinkholes_per_1000km2_pct,gators_per_10k_obs_pct,homicide_per_100k_pct,crash_deaths_per_100k_pct
+Ambrosia,Lake Okeechobee sugar country (Clewiston),medium,"Glades, Hendry",59262,73.93,92.54,15.67,88.81,84.48,93.28
+Vice City,Miami,high,Miami-Dade,2838461,53.53,75.37,23.88,86.57,75.86,5.97
+Mount Kalaga,"North Florida forests (+ Providence Canyon, Georgia)",low,"Marion, Liberty",436860,49.85,20.52,58.96,42.54,77.59,70.9
+Leonida Keys,Florida Keys,high,Monroe,80908,47.22,83.58,13.43,74.63,24.14,40.3
+Grassrivers,The Everglades / Big Cypress,medium,"Monroe, Collier",497141,44.4,83.58,17.16,86.57,13.79,20.9
+Port Gellhorn,Panama City / Panhandle Gulf coast,medium,Bay,199718,43.83,54.48,26.87,44.78,48.28,44.78
