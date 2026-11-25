@@ -51,6 +51,27 @@ REGIONS = [
     {"region": "Mount Kalaga", "inspiration": "North Florida forests (+ Providence Canyon, Georgia)", "counties": ["12083", "12077"], "confidence": "low"},
 ]
 
+# GTA 6 story chapters (91 missions) per fan walkthrough guides (KeenGamer / PC Gamer mission lists, Nov 2026; not an
+# official Rockstar list). Spoiler-light: chapter names and opening missions only. Chapter 5's location isn't given in
+# the guides, so the site uses it as a statewide finale instead of pinning it to a county.
+CHAPTERS = [
+    {"n": 1, "title": "Just Like Paradise", "region": "Leonida Keys", "missions": 22, "fips": "12087",
+     "hook": "Opens in the Keys: fishing, diving and boat jobs (“Gone Fishing”, “Island Dreams”).",
+     "stats": ["landfalls_since_1851", "major_hurricanes_1950_2025", "gators_per_10k_obs"]},
+    {"n": 2, "title": "Paradise Lost", "region": "Port Gellhorn", "missions": 11, "fips": "12005",
+     "hook": "A rundown Gulf-coast town and a motel, with an ambulance job (“Ambulance Chaser”).",
+     "stats": ["strongest_landfall", "crash_deaths_per_100k", "home_value"]},
+    {"n": 3, "title": "Vice City arrival", "region": "Vice City", "missions": 26, "fips": "12086",
+     "hook": "Arrival in the city (“Welcome to Vice City”), car thefts and a bank job.",
+     "stats": ["homicide_per_100k", "home_value", "chaos_score"]},
+    {"n": 4, "title": "Vice City, Baby", "region": "Vice City", "missions": 25, "fips": "12086",
+     "hook": "Ocean Beach, nightclubs and a job at the airport.",
+     "stats": ["hurricanes_1950_2025", "alligator_obs", "crash_deaths_per_100k"]},
+    {"n": 5, "title": "Top of the World, Ma", "region": None, "missions": 7, "fips": None,
+     "hook": "The final 7 missions. No spoilers here: this page's finale is the whole state.",
+     "stats": []},
+]
+
 # The five "chaos" layers that make up the Reality Score (higher = more chaotic)
 CHAOS_LAYERS = {
     "hurricanes_per_decade": "Hurricanes passing within 60 nm, per decade (1950-2025)",

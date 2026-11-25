@@ -82,3 +82,6 @@ def test_build_end_to_end(tmp_path, monkeypatch):
     assert first["landfalls_since_1851"] == "1"                     # ...but one storm
     payload = json.loads(html.split("const D = ", 1)[1].split(";\n", 1)[0])
     assert all(t["lf"] and len(t["lf"][0]) == 3 for t in payload["tracks"])  # replay gets landfall markers
+    fips = {r["fips"] for r in rows}
+    assert sum(ch["missions"] for ch in payload["chapters"]) == 91             # story mode: all 91 missions
+    assert all(ch["fips"] is None or ch["fips"] in fips for ch in payload["chapters"])

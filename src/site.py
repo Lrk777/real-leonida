@@ -98,6 +98,7 @@ def write_site(features, df, regions, findings, config, landfalls=None, headline
         "W": round(W), "H": round(H), "counties": counties, "regions": regs,
         "layers": [{"key": k, "label": l, "unit": u, "dp": d, "chaos": c} for k, l, u, d, c in LAYERS],
         "ramp": RAMP, "headlines": headlines, "findings": findings,
+        "chapters": getattr(config, "CHAPTERS", []),
     }
     with open(os.path.join(os.path.dirname(__file__), "template.html")) as fh:
         html = fh.read()
