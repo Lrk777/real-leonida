@@ -70,12 +70,15 @@ def load_chr(dq):
     df["homicide_per_100k"] = pd.to_numeric(df["Homicides raw value"], errors="coerce")
     df["homicide_n"] = pd.to_numeric(df["Homicides numerator"], errors="coerce")
     df["crash_deaths_per_100k"] = pd.to_numeric(df["Motor Vehicle Crash Deaths raw value"], errors="coerce")
+    # raw death counts (numerators) let the dashboard's A/B tests put confidence ranges on rate differences
+    num = "Motor Vehicle Crash Deaths numerator"
+    df["crash_n"] = pd.to_numeric(df[num], errors="coerce") if num in df.columns else float("nan")
     dq.check("CHR: 67 counties", len(df) == 67, f"found {len(df)}")
     dq.check("CHR: crash-death rate present for every county", df.crash_deaths_per_100k.notna().all(),
              f"{df.crash_deaths_per_100k.isna().sum()} missing", hard=False)
     dq.check("CHR: homicide rate present", df.homicide_per_100k.notna().sum() >= 60,
              f"{df.homicide_per_100k.isna().sum()} suppressed (small counts)", hard=False)
-    return df[["fips", "homicide_per_100k", "homicide_n", "crash_deaths_per_100k"]]
+    return df[["fips", "homicide_per_100k", "homicide_n", "crash_deaths_per_100k", "crash_n"]]
 
 
 def load_zhvi(dq):
@@ -280,16 +283,25 @@ def main():
     keep = ["fips", "name", "population", "area_km2", "hurricanes_1950_2025", "major_hurricanes_1950_2025",
             "hurricanes_per_decade", "landfalls_since_1851", "sinkholes", "sinkholes_per_1000km2", "all_obs",
             "alligator_obs", "gators_per_10k_obs", "homicide_n", "homicide_per_100k", "crash_deaths_per_100k",
-            "home_value", "home_value_change_pct"] + pct_cols + ["home_value_pct", "layers_available",
+            "home_value", "home_value_change_pct", "crash_n"] + pct_cols + ["home_value_pct", "layers_available",
                                                                "chaos_score", "chaos_rank"]
     df[keep].round(3).to_csv(os.path.join(OUT, "county_metrics.csv"), index=False)
     reg.round(2).to_csv(os.path.join(OUT, "region_scores.csv"), index=False)
     if len(lf_fl):
         lf_fl.sort_values("date").to_csv(os.path.join(OUT, "florida_hurricane_landfalls.csv"), index=False)
-    pd.DataFrame(dq.rows).to_csv(os.path.join(OUT, "dq_report.csv"), index=False)
+
+    # Dev Mode models: k-means "biomes" on the hazard percentiles, and hurricanes per decade ("seasons")
+    from .analytics import biomes, seasons
+    bio = biomes(df, list(config.CHAOS_LAYERS))
+    sea = seasons(passes, storms, lf_fl)
+    dq.check("biomes: every county clustered", len(bio["labels"]) == 67, f"k={bio['k']}, silhouette={bio['silhouette']}", hard=False)
+    findings["biomes"] = {"k": bio["k"], "silhouette": bio["silhouette"],
+                          "clusters": [{k: c[k] for k in ("name", "size", "centroid")} for c in bio["clusters"]]}
+    findings["seasons"] = {k: sea[k] for k in ("labels", "years", "fl_pass", "fl_major_lf")}
 
     heads = headlines(df, reg)
     findings["headlines"] = heads
+    pd.DataFrame(dq.rows).to_csv(os.path.join(OUT, "dq_report.csv"), index=False)
     with open(os.path.join(OUT, "findings.json"), "w") as fh:
         json.dump(findings, fh, indent=2, default=float)
 
@@ -307,7 +319,8 @@ def main():
                            "lf": [[r.lon, r.lat, int(r.wind_kt)] for r in fl_pts.itertuples()],
                            "pts": [[p["lon"], p["lat"], p["wind"]] for p in s["points"]]})
     tracks.sort(key=lambda t: t["year"])
-    write_site(fl_feats, df, reg, findings, config, landfalls=lf_fl, headlines=heads, tracks=tracks)
+    write_site(fl_feats, df, reg, findings, config, landfalls=lf_fl, headlines=heads, tracks=tracks,
+               biomes=bio, seasons=sea)
     from .readme import write_readme
     write_readme(df, reg, heads, findings, dq.rows)
     print(f"built: {len(df)} counties, {len(reg)} regions, {sum(r['passed'] for r in dq.rows)}/{len(dq.rows)} DQ checks passed")
