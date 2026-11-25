@@ -85,3 +85,7 @@ def test_build_end_to_end(tmp_path, monkeypatch):
     fips = {r["fips"] for r in rows}
     assert sum(ch["missions"] for ch in payload["chapters"]) == 91             # story mode: all 91 missions
     assert all(ch["fips"] is None or ch["fips"] in fips for ch in payload["chapters"])
+    assert len(payload["missions"]) == 91                                       # mission guide
+    assert all(m["theme"] in payload["themes"] for m in payload["missions"])
+    for ch in payload["chapters"]:
+        assert sum(m["ch"] == ch["n"] for m in payload["missions"]) == ch["missions"]

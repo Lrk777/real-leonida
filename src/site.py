@@ -3,6 +3,8 @@ import json
 import math
 import os
 
+from .missions import MISSIONS, THEMES
+
 LAYERS = [
     # key, button label, unit text, decimals, part of chaos score?
     ("chaos_score", "Chaos score", "Reality Score (0-100, higher = more chaotic)", 0, False),
@@ -99,6 +101,8 @@ def write_site(features, df, regions, findings, config, landfalls=None, headline
         "layers": [{"key": k, "label": l, "unit": u, "dp": d, "chaos": c} for k, l, u, d, c in LAYERS],
         "ramp": RAMP, "headlines": headlines, "findings": findings,
         "chapters": getattr(config, "CHAPTERS", []),
+        "missions": [{"ch": c, "name": n, "what": w, "theme": t} for c, n, w, t in MISSIONS],
+        "themes": THEMES,
     }
     with open(os.path.join(os.path.dirname(__file__), "template.html")) as fh:
         html = fh.read()
