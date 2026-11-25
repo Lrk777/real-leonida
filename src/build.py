@@ -304,6 +304,7 @@ def main():
             tracks.append({"id": s["id"], "name": s["name"].title(), "year": s["year"],
                            "landfall_kt": int(fl_pts.wind_kt.max()),
                            "counties": sorted(set(names[f] for f in fl_pts.fips)),
+                           "lf": [[r.lon, r.lat, int(r.wind_kt)] for r in fl_pts.itertuples()],
                            "pts": [[p["lon"], p["lat"], p["wind"]] for p in s["points"]]})
     tracks.sort(key=lambda t: t["year"])
     write_site(fl_feats, df, reg, findings, config, landfalls=lf_fl, headlines=heads, tracks=tracks)

@@ -14,7 +14,7 @@ LAYERS = [
     ("home_value", "Home prices", "typical home value (Zillow)", 0, False),
 ]
 
-RAMP = ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]  # sequential blue, light -> dark
+RAMP = ["#1d3f5c", "#1e6a8c", "#1c97b8", "#2ec4dd", "#a8f3ff"]  # sequential cyan for the dark neon theme: dim (low) -> bright (high)
 
 
 def _project(features):
@@ -90,7 +90,8 @@ def write_site(features, df, regions, findings, config, landfalls=None, headline
     storm_tracks = []
     for t in tracks or []:
         pts = [[round(x, 1), round(y, 1), int(w)] for x, y, w in ((*proj(lon, lat), w) for lon, lat, w in t["pts"])]
-        storm_tracks.append({**{k: t[k] for k in ("id", "name", "year", "landfall_kt", "counties")}, "pts": pts})
+        lf = [[round(x, 1), round(y, 1), int(w)] for x, y, w in ((*proj(lon, lat), w) for lon, lat, w in t.get("lf", []))]
+        storm_tracks.append({**{k: t[k] for k in ("id", "name", "year", "landfall_kt", "counties")}, "pts": pts, "lf": lf})
 
     payload = {
         "tracks": storm_tracks,
