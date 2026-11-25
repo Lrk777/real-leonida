@@ -179,13 +179,38 @@
   .method{color:var(--ink2);font-size:14px;max-width:880px}
   .method li{margin-bottom:6px}
   footer{margin:40px 0 0;padding:18px 0 30px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  /* Story mode */
+  .progress{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:14px;color:var(--ink2)}
+  .progress i{flex:1;max-width:360px;height:10px;border-radius:5px;background:var(--surface2);border:1px solid var(--line);overflow:hidden;display:block}
+  .progress i em{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--pink));transition:width .5s}
+  .chapters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  @media (max-width:860px){.chapters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .ch{font:inherit;text-align:left;color:var(--ink);background:linear-gradient(160deg,var(--surface2),var(--surface));border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;position:relative;transition:border-color .15s,box-shadow .15s,transform .15s}
+  .ch:hover,.ch.on{border-color:var(--gold);box-shadow:0 0 16px rgba(255,210,63,.35);transform:translateY(-2px)}
+  .ch .no{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--pink)}
+  .ch b{display:block;font-size:16px;font-weight:900;font-style:italic;text-transform:uppercase;line-height:1.15;margin:2px 0 4px}
+  .ch small{color:var(--ink2);font-size:12px}
+  .ch .done{position:absolute;top:10px;right:10px;font-size:11px;font-weight:800;color:var(--gold);display:none}
+  .ch.cleared .done{display:block}
+  .brief{margin-top:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start}
+  @media (max-width:860px){.brief{grid-template-columns:1fr}}
+  .brief h3{margin:0;font-size:22px;font-weight:900;font-style:italic;text-transform:uppercase}
+  .brief .hook{color:var(--ink2);font-size:14px;margin:4px 0 10px}
+  .rcheck{list-style:none;margin:0;padding:0}
+  .rcheck li{padding:7px 0;border-top:1px solid var(--line);font-size:15px}
+  .rcheck li span{color:var(--muted);font-size:12px;margin-left:6px}
+  .stamp{font-weight:900;font-style:italic;text-transform:uppercase;font-size:22px;color:var(--gold);text-shadow:0 0 14px rgba(255,210,63,.5);border:2px solid var(--gold);border-radius:10px;padding:8px 14px;transform:rotate(-4deg);text-align:center;white-space:nowrap}
+  .stamp.pop{animation:pop .45s ease-out}
+  @keyframes pop{0%{transform:rotate(-4deg) scale(1.6);opacity:0}100%{transform:rotate(-4deg) scale(1);opacity:1}}
+  @media (prefers-reduced-motion: reduce){.stamp.pop{animation:none}}
+  [data-theme="day"] .stamp{text-shadow:none}
   @media (max-width:600px){.hero .wrap{background:linear-gradient(0deg,rgba(13,10,31,.75),rgba(13,10,31,0) 75%)} .round{grid-template-columns:1fr 110px 1fr} .slider{grid-template-columns:90px 1fr 64px}}
 </style>
 </head>
 <body>
 <div class="topbar"><div class="wrap">
   <span class="brand">REAL LEONIDA</span>
-  <nav class="nav" aria-label="Sections"><a href="#regions-h">Regions</a><a href="#map-h">Map</a><a href="#faceoff-h">Face-off</a><a href="#survive-h">Survive</a><a href="#finder-h">Calm corner</a><a href="#method-h">Method</a></nav>
+  <nav class="nav" aria-label="Sections"><a href="#regions-h">Regions</a><a href="#story-h">Story mode</a><a href="#map-h">Map</a><a href="#faceoff-h">Face-off</a><a href="#survive-h">Survive</a><a href="#finder-h">Calm corner</a><a href="#method-h">Method</a></nav>
   <button type="button" class="themebtn" id="themebtn" aria-label="Switch colour theme">☀ Day mode</button>
 </div></div>
 
@@ -242,6 +267,12 @@
   <h2 id="regions-h">The six regions, <span>scored</span></h2>
   <p class="sub">Reality Score = how chaotic the real counties are compared with the rest of Florida (0 = calmest county, 100 = most chaotic). 50 is a typical county. Wanted level: ★ for every 20 points. The game paints every region as chaotic, so 60+ = <b>not exaggerated</b>, 45-59 = <b>fair</b>, under 45 = <b>exaggerated</b>. Click a card to find it on the map.</p>
   <div class="regions" id="regions"></div>
+
+  <h2 id="story-h">Story mode: <span>the campaign, reality-checked</span></h2>
+  <p class="sub">GTA 6's 91 story missions run across five chapters, and each of the first four is mostly set in one region. Start a chapter to jump to the real county behind it and see how the real place compares. Spoiler-light: chapter names and opening missions only. Mission counts come from fan walkthrough guides, not an official Rockstar list.</p>
+  <div class="progress"><span id="progtxt">0 / 5 chapters cleared</span><i><em id="progbar"></em></i></div>
+  <div class="chapters" id="chapters"></div>
+  <div class="card brief" id="brief"><div><h3>Pick a chapter</h3><p class="hook">Your first mission: Chapter 1, where the story opens in the Keys.</p></div></div>
 
   <h2 id="map-h">All 67 counties, <span>live map</span></h2>
   <p class="sub">Pick a layer. Hover for a value, click a county for its profile. Pink outlines are the counties a GTA 6 region is based on.</p>
@@ -569,6 +600,66 @@ function rank(show) {
 }
 $("#results").addEventListener("click", e => { const li = e.target.closest("li"); if (li) { select(li.dataset.f); $("#mapbox").scrollIntoView({behavior: "smooth", block: "center"}); } });
 $("#results").addEventListener("keydown", e => { const li = e.target.closest("li"); if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(li.dataset.f); } });
+
+// Story mode: GTA 6 chapters -> real counties, with stats computed from the data on every build
+const CH = D.chapters || [];
+let cleared = new Set();
+try { cleared = new Set(JSON.parse(localStorage.getItem("rl-cleared") || "[]")); } catch (e) {}
+const rk = (k, f) => { const r = rankOf(k, f), n = D.counties.filter(x => x[k] != null).length; return r ? `#${r} of ${n} in Florida` : ""; };
+const STAT = {
+  landfalls_since_1851: c => [`${fmt(c.landfalls_since_1851, 0)} hurricanes made landfall here since 1851`, rk("landfalls_since_1851", c.fips)],
+  major_hurricanes_1950_2025: c => [`${fmt(c.major_hurricanes_1950_2025, 0)} major (Cat 3+) hurricanes passed within 60 nm since 1950`, rk("major_hurricanes_1950_2025", c.fips)],
+  hurricanes_1950_2025: c => [`${fmt(c.hurricanes_1950_2025, 0)} hurricanes passed within 60 nm since 1950`, rk("hurricanes_1950_2025", c.fips)],
+  gators_per_10k_obs: c => [`1 in ${c.gators_per_10k_obs ? Math.round(10000 / c.gators_per_10k_obs) : "–"} wildlife sightings is an alligator`, rk("gators_per_10k_obs", c.fips)],
+  alligator_obs: c => [`${fmt(c.alligator_obs, 0)} alligator sightings logged on iNaturalist`, rk("alligator_obs", c.fips)],
+  strongest_landfall: c => c.landfalls.length ? [`Strongest landfall: ${c.landfalls[0][0]} ${c.landfalls[0][1]} (${catName(c.landfalls[0][2])})`, ""] : ["No hurricane landfall recorded here since 1851", ""],
+  crash_deaths_per_100k: c => [`${fmt(c.crash_deaths_per_100k, 1)} road deaths per 100,000 residents a year`, rk("crash_deaths_per_100k", c.fips)],
+  homicide_per_100k: c => [`${fmt(c.homicide_per_100k, 1)} homicides per 100,000 residents a year`, rk("homicide_per_100k", c.fips)],
+  home_value: c => [`Typical home: ${money(c.home_value)}`, rk("home_value", c.fips)],
+  chaos_score: c => [`Reality Score ${fmt(c.chaos_score, 0)} / 100`, rk("chaos_score", c.fips)],
+};
+function drawChapters() {
+  $("#chapters").innerHTML = CH.map(ch => `<button type="button" class="ch${cleared.has(ch.n) ? " cleared" : ""}" data-n="${ch.n}" aria-label="Chapter ${ch.n}${cleared.has(ch.n) ? ", cleared" : ""}">
+    <span class="done">✓ CLEARED</span><span class="no">CHAPTER ${ch.n}</span><b>${ch.title}</b>
+    <small>${ch.region || "Statewide finale"} · ${ch.missions} missions</small></button>`).join("");
+  $("#progtxt").textContent = `${cleared.size} / ${CH.length} chapters cleared`;
+  $("#progbar").style.width = (CH.length ? cleared.size / CH.length * 100 : 0) + "%";
+}
+function playChapter(n) {
+  const ch = CH.find(x => x.n === n); if (!ch) return;
+  document.querySelectorAll(".ch").forEach(b => b.classList.toggle("on", +b.dataset.n === n));
+  let body;
+  if (ch.fips) {
+    const c = byFips[ch.fips], v = verdict(c.chaos_score);
+    body = `<div><div class="no" style="font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--pink)">CHAPTER ${ch.n} · ${ch.missions} MISSIONS · ${ch.region.toUpperCase()}</div>
+      <h3>Real ${ch.region} = ${c.name} County</h3><p class="hook">${ch.hook}</p>
+      ${stars(c.chaos_score)} <span class="verdict ${v[1]}">${v[0]}</span>
+      <ul class="rcheck">${ch.stats.map(k => { const [t, r] = STAT[k](c); return `<li>${t}${r ? `<span>${r}</span>` : ""}</li>`; }).join("")}</ul>
+      <div class="btnrow"><button type="button" class="btn" id="chmap">See it on the map</button><button type="button" class="btn hot" id="chcard">⬇ ${c.name} ID card</button></div></div>`;
+    regionOn = ch.region; document.querySelectorAll(".rc").forEach(x => x.classList.toggle("on", x.dataset.region === regionOn));
+    select(ch.fips);
+  } else {
+    const top = [...D.counties].sort((a, b) => b.chaos_score - a.chaos_score)[0], vc = byFips["12086"];
+    const regs = [...D.regions].sort((a, b) => b.reality_score - a.reality_score);
+    body = `<div><div class="no" style="font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--pink)">CHAPTER ${ch.n} · ${ch.missions} MISSIONS · FINALE</div>
+      <h3>Final boss: the real most chaotic county</h3><p class="hook">${ch.hook}</p>
+      <ul class="rcheck"><li>${top.name} County tops all 67 counties with a Reality Score of ${fmt(top.chaos_score, 0)} ${top.regions.length ? `(GTA 6: ${top.regions.join(" / ")})` : "(not in any GTA 6 region)"}</li>
+      <li>Real Vice City (${vc.name}) ends at #${vc.chaos_rank} of ${D.counties.length}, score ${fmt(vc.chaos_score, 0)}</li>
+      <li>Most chaotic region overall: ${regs[0].region} (${Math.round(regs[0].reality_score)}). Calmest: ${regs[regs.length - 1].region} (${Math.round(regs[regs.length - 1].reality_score)})</li></ul>
+      <div class="btnrow"><button type="button" class="btn" id="chmap">See ${top.name} on the map</button><button type="button" class="btn hot" id="chcard">⬇ ${top.name} ID card</button></div></div>`;
+    regionOn = null; document.querySelectorAll(".rc").forEach(x => x.classList.remove("on"));
+    select(top.fips);
+  }
+  const first = !cleared.has(n); cleared.add(n);
+  try { localStorage.setItem("rl-cleared", JSON.stringify([...cleared])); } catch (e) {}
+  const all = cleared.size === CH.length;
+  $("#brief").innerHTML = body + `<div class="stamp${first ? " pop" : ""}">${all ? "100% Reality<br>checked" : "Chapter<br>cleared"}</div>`;
+  $("#chmap").onclick = () => $("#mapbox").scrollIntoView({behavior: "smooth", block: "center"});
+  $("#chcard").onclick = () => idCard(byFips[selected]);
+  drawChapters(); document.querySelectorAll(".ch").forEach(b => b.classList.toggle("on", +b.dataset.n === n));
+}
+$("#chapters").addEventListener("click", e => { const b = e.target.closest(".ch"); if (b) playChapter(+b.dataset.n); });
+drawChapters();
 
 // Start
 const H = Object.fromEntries(location.hash.slice(1).split("&").filter(Boolean).map(kv => kv.split("=")));
