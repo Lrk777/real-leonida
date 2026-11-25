@@ -81,6 +81,7 @@ Region → county matching follows published map guides and is a judgement call;
 - CHR: crash-death rate present for every county: 0 missing
 - CHR: homicide rate present: 9 suppressed (small counts)
 - Zillow: Florida counties covered: 67 counties
+- biomes: every county clustered: k=4, silhouette={3: 0.206, 4: 0.226, 5: 0.213, 6: 0.208}
 
 Full report: `outputs/dq_report.csv`. Raw files are re-downloaded on every build and their SHA-256 hashes recorded in `data/raw/manifest.json`.
 

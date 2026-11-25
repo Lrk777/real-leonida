@@ -355,6 +355,103 @@
     "crash_deaths_per_100k": 20.85,
     "home_value": 302690.36
   },
+  "biomes": {
+    "k": 4,
+    "silhouette": {
+      "3": 0.206,
+      "4": 0.226,
+      "5": 0.213,
+      "6": 0.208
+    },
+    "clusters": [
+      {
+        "name": "Storm Coast",
+        "size": 23,
+        "centroid": [
+          70.5,
+          31.8,
+          50.9,
+          36.7,
+          27.6
+        ]
+      },
+      {
+        "name": "Fast-Road Country",
+        "size": 20,
+        "centroid": [
+          21.6,
+          50.4,
+          27.4,
+          66.2,
+          73.3
+        ]
+      },
+      {
+        "name": "Sinkhole Belt",
+        "size": 16,
+        "centroid": [
+          47.9,
+          85.3,
+          68.7,
+          39.5,
+          38.8
+        ]
+      },
+      {
+        "name": "Hardcore Zone",
+        "size": 8,
+        "centroid": [
+          72.4,
+          36.8,
+          72.6,
+          75.0,
+          84.7
+        ]
+      }
+    ]
+  },
+  "seasons": {
+    "labels": [
+      "1950s",
+      "1960s",
+      "1970s",
+      "1980s",
+      "1990s",
+      "2000s",
+      "2010s",
+      "2020s"
+    ],
+    "years": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      6
+    ],
+    "fl_pass": [
+      6,
+      9,
+      4,
+      4,
+      6,
+      8,
+      4,
+      8
+    ],
+    "fl_major_lf": [
+      2,
+      2,
+      1,
+      0,
+      2,
+      4,
+      2,
+      4
+    ]
+  },
   "headlines": [
     {
       "big": "Ambrosia is the real chaos capital",
